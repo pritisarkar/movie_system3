@@ -1,0 +1,25 @@
+Movie System
+-------------
+
+-user (table)
+id
+password
+email
+boolean type(is_admin) for admin 1 and else 0
+
+-movie (table)
+id
+name
+description
+rls yr
+g_id (m*m)(f key)
+
+-Genre (table)
+id
+name
+description
+
+
+
+
+
