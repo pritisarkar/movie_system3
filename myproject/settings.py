@@ -90,6 +90,9 @@ DATABASES = {
     }
 }
 
+# settings.py
+JWT_SECRET = 'my_secret_key'  # Use a strong secret key
+JWT_EXPIRATION_DELTA = 3600  # Token expiration in seconds (1 hour)
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
