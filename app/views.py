@@ -64,8 +64,18 @@ def login(request):
         return JsonResponse({"msg": str(e), "status": "error"}, status=500)
     
 
+#token validation 
+def is_token_valid(token):
+    return token == "your_valid_token_here"
+
+
 @csrf_exempt
 def GenreADD(request):
+   
+    token = request.headers.get('Authorization')
+    if not token or not is_token_valid(token.split(" ")[-1]):
+
+        return JsonResponse({"status":"error","message":"Please login"},status=401)
     if request.method == 'GET':
         try:
             genres = list(Genre.objects.values('id', 'name', 'description'))

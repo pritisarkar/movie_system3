@@ -9,6 +9,13 @@ class User(models.Model):
 class Genre(models.Model):
     name = models.CharField(max_length=100, unique=True)
     description = models.TextField(blank=True, null=True)
+    def __str__(self):
+        return self.name
     
+class Movie(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    description = models.TextField(blank=True, null=True)
+    release_year = models.IntegerField()
+    genres = models.ManyToManyField(Genre, related_name='movies')
     def __str__(self):
         return self.name
