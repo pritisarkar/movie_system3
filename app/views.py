@@ -74,11 +74,13 @@ def GenreADD(request):
             genres = list(Genre.objects.values('id', 'name', 'description'))
             return JsonResponse(genres, safe=False)
         except Exception as e:
-            return JsonResponse({"status": "error", "message": str(e)})
+            return JsonResponse({"status": "error", "message": 'Already Exist'})
     elif request.method == 'POST':
         try:
             data = json.loads(request.body)
+            print(data["name"])
             genre = Genre.objects.create(name=data['name'], description=data.get('description', ''))
+            
             return JsonResponse({'id': genre.id, 'name': genre.name, 'description': genre.description}, status=201)
         except Exception as e:
-            return JsonResponse({"status": "error", "message": str(e)})
+            return JsonResponse({"status": "error", "message": 'Already Exist'})
