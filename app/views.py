@@ -10,6 +10,8 @@ import datetime
 from .models import Genre
 from django.views import View
 
+
+
 @csrf_exempt
 def user(request):
     print("hey user")
@@ -61,11 +63,6 @@ def login(request):
     except Exception as e:
         return JsonResponse({"msg": str(e), "status": "error"}, status=500)
     
-import json
-from django.http import JsonResponse
-from django.views import View
-from django.views.decorators.csrf import csrf_exempt
-from .models import Genre
 
 @csrf_exempt
 def GenreADD(request):
