@@ -9,6 +9,9 @@ import bcrypt
 import datetime
 from .models import Genre
 from django.views import View
+from .models import Movie
+from django.db import IntegrityError 
+
 
 
 
@@ -66,9 +69,9 @@ def login(request):
 
 #token validation 
 def is_token_valid(token):
-    return token == "your_valid_token_here"
+    return token == "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJleHAiOjE3MzAyMDA1OTYsImlhdCI6MTczMDE5Njk5Nn0.2zGrVXKtHQKz-zyUiPvy-T2b-A66JGLDQXIWWoUaUns"
 
-
+#add genre
 @csrf_exempt
 def GenreADD(request):
    
@@ -91,3 +94,87 @@ def GenreADD(request):
             return JsonResponse({'id': genre.id, 'name': genre.name, 'description': genre.description}, status=201)
         except Exception as e:
             return JsonResponse({"status": "error", "message": 'Already Exist'})
+        
+        
+#update genre
+def GenreUPDATE(request, genre_id):
+    token_error = is_token_valid(request)
+    if token_error:
+        return token_error
+    if request.method == 'PUT':
+        try:
+            data = json.loads(request.body)
+            genre = Genre.objects.get(id=genre_id)
+            genre.name = data.get('name', genre.name)
+            genre.description = data.get('description', genre.description)
+            genre.save()
+            return JsonResponse(
+                {'id': genre.id, 'name': genre.name, 'description': genre.description}, 
+                status=200
+            )
+        except Genre.DoesNotExist:
+            return JsonResponse({"status": "error", "message": "Genre not found"}, status=404)
+        except json.JSONDecodeError:
+            return JsonResponse({"status": "error", "message": "Invalid JSON"}, status=400)
+
+#Delete Genre
+def GenreDELETE(request, genre_id):
+    token_error = is_token_valid(request)
+    if token_error:
+        return token_error
+
+    if request.method == 'DELETE':
+        try:
+            genre = Genre.objects.get(id=genre_id)
+            genre.delete()
+            return JsonResponse({"status": "success", "message": "Genre deleted"}, status=204)
+        except Genre.DoesNotExist:
+            return JsonResponse({"status": "error", "message": "Genre not found"}, status=404)
+        
+
+#movie add
+@csrf_exempt  
+def movieADD(request):
+    token_error = is_token_valid(request)
+    if token_error:
+        return token_error
+
+    if request.method != 'POST':
+        return JsonResponse({"status": "error", "message": "Invalid request method"}, status=405)
+
+    try:
+        data = json.loads(request.body)
+
+        # Validate required fields
+        title = data.get('title')
+        release_year = data.get('release_year')
+
+        if not title or not release_year:
+            return JsonResponse(
+                {"status": "error", "message": "Missing required fields: title, release_year"},
+                status=400
+            )
+
+        # Create movie instance
+        movie = Movie.objects.create(
+            name=title,
+            description=data.get('description', ''),
+            release_year=release_year
+        )
+
+        # Set genres if provided
+        if 'genres' in data:
+            movie.genres.set(data['genres'])
+
+        return JsonResponse({
+            'id': movie.id,
+            'name': movie.name,
+            'description': movie.description,
+            'release_year': movie.release_year,
+            'genres': list(movie.genres.values_list('id', flat=True))
+        }, status=201)
+
+    except IntegrityError:
+        return JsonResponse({"status": "error", "message": "Movie with this title already exists"}, status=400)
+    except json.JSONDecodeError:
+        return JsonResponse({"status": "error", "message": "Invalid JSON"}, status=400)
