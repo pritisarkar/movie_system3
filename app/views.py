@@ -247,7 +247,7 @@ def signout(request):
     return JsonResponse({"status": "success", "message": "Signed out successfully"}, status=200)
 
 #for user
-# User Register and login using email and password
+# User Register and login using email and password(Done)
 # Authentication using JSON Web Token
 # User Profile
 # User logout
@@ -272,3 +272,41 @@ def customer(request):
         import traceback
         traceback.print_exc()
         return JsonResponse({"status":"error","message":str(e)})
+    
+
+#customer login
+def loginCustomer(request):
+    print("hey login")
+    try:
+        if request.method == 'POST':
+            data = json.loads(request.body)
+            email = data['email']
+            password = data['password'].encode('utf-8')
+            customer = Customer.objects.filter(email=email).first()
+            if user:
+                if bcrypt.checkpw(password, customer.password.encode('utf-8')):
+                    token_payload = {
+                        'user_id': user.id,
+                        'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=settings.JWT_EXPIRATION_DELTA),
+                        'iat': datetime.datetime.utcnow()
+                    }
+                    token = jwt.encode(token_payload, settings.JWT_SECRET, algorithm='HS256')
+
+                    return JsonResponse({"msg": "login successful", "status": "success","token":token})
+                else:
+                    return JsonResponse({"msg": "invalid password", "status": "error"}, status=401)
+            else:
+                return JsonResponse({"msg": "user not found", "status": "error"}, status=404)
+
+        return JsonResponse({"msg": "invalid request method", "status": "error"}, status=405)
+
+    except json.JSONDecodeError:
+        return JsonResponse({"msg": "invalid JSON", "status": "error"}, status=400)
+    except Exception as e:
+        return JsonResponse({"msg": str(e), "status": "error"}, status=500)
+    
+
+#customer token
+
+    
+

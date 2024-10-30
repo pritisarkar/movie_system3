@@ -11,5 +11,7 @@ urlpatterns = [
     path("movieUpdae",views.movieUpdate,name="movieUpdate"),
     path("movieDelete",views.movieDelete,name="movieDelete"),
     path("signout",views.signout,name="signout"),
-    path("customer",views.customer,name="customer")
+    path("customer",views.customer,name="customer"),
+    path("loginCustomer",views.loginCustomer,name="loginCustomer")
+    
 ]
