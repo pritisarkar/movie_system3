@@ -1,6 +1,8 @@
 Movie System
 -------------
 DB name : movie_system3
+
+for ADMIN
 -user (table)
 id
 password
@@ -18,6 +20,23 @@ g_id (m*m)(f key)
 id
 name
 description
+
+
+******
+# User Register and login using email and password
+# Authentication using JSON Web Token
+# User Profile
+# User logout
+
+For user 
+-Customer (table)
+id
+email
+name
+password
+
+
+
 
 
 

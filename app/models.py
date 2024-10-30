@@ -19,3 +19,10 @@ class Movie(models.Model):
     genres = models.ManyToManyField(Genre, related_name='movies')
     def __str__(self):
         return self.name
+    
+class Customer(models.Model):
+    email = models.CharField(max_length = 50)
+    name = models.CharField(max_length=50, unique=True)
+    password = models.CharField()
+    def __str__(self):
+        return self.email

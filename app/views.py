@@ -12,6 +12,7 @@ from django.views import View
 from .models import Movie
 from django.db import IntegrityError 
 from django.contrib.auth import logout
+from .models import Customer
 
 
 
@@ -244,3 +245,30 @@ def signout(request):
     logout(request)
 
     return JsonResponse({"status": "success", "message": "Signed out successfully"}, status=200)
+
+#for user
+# User Register and login using email and password
+# Authentication using JSON Web Token
+# User Profile
+# User logout
+
+#customer Registration
+@csrf_exempt
+def customer(request):
+    print("hey user")
+    try:
+        if request.method == 'POST':
+            data = json.loads(request.body)
+            email = data['email']
+            name = data['name']
+            password = data['password'].encode('utf-8')
+            hashed_password = bcrypt.hashpw(password, bcrypt.gensalt()).decode('utf-8')
+            customer = Customer(email=email,name=name, password=hashed_password)
+            customer.save()
+            return JsonResponse({"msg":"data inserted","status":"success"})
+        else:
+            return "hello"
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return JsonResponse({"status":"error","message":str(e)})
