@@ -11,6 +11,7 @@ from .models import Genre
 from django.views import View
 from .models import Movie
 from django.db import IntegrityError 
+from django.contrib.auth import logout
 
 
 
@@ -174,3 +175,72 @@ def movieADD(request):
         return JsonResponse({"status": "error", "message": "Invalid JSON"}, status=400)
     
 # Movie update
+@csrf_exempt  
+def movieUpdate(request, movie_id):
+    token_error = is_token_valid(request)
+    if token_error:
+        return token_error
+
+    if request.method != 'PUT':
+        return JsonResponse({"status": "error", "message": "Invalid request method"}, status=405)
+
+    try:
+        data = json.loads(request.body)
+
+        movie = Movie.objects.get(id=movie_id)
+        movie.name = data.get('title', movie.name)
+        movie.description = data.get('description', movie.description)
+        movie.release_year = data.get('release_year', movie.release_year)
+        if 'genres' in data:
+            movie.genres.set(data['genres'])
+        movie.save()
+        return JsonResponse({
+            'id': movie.id,
+            'name': movie.name,
+            'description': movie.description,
+            'release_year': movie.release_year,
+            'genres': list(movie.genres.values_list('id', flat=True))
+        }, status=200)
+
+    except Movie.DoesNotExist:
+        return JsonResponse({"status": "error", "message": "Movie not found"}, status=404)
+    except IntegrityError:
+        return JsonResponse({"status": "error", "message": "Movie with this title already exists"}, status=400)
+    except json.JSONDecodeError:
+        return JsonResponse({"status": "error", "message": "Invalid JSON"}, status=400)
+    
+
+#movie Delete
+@csrf_exempt
+def movieDelete(request, movie_id):
+    token_error = is_token_valid(request)
+    if token_error:
+        return token_error
+
+    if request.method != 'DELETE':
+        return JsonResponse({"status": "error", "message": "Invalid request method"}, status=405)
+
+    try:
+        movie = Movie.objects.get(id=movie_id)
+        movie.delete()
+
+        return JsonResponse({"status": "success", "message": "Movie deleted successfully"}, status=200)
+
+    except Movie.DoesNotExist:
+        return JsonResponse({"status": "error", "message": "Movie not found"}, status=404)
+    
+
+#signout
+@csrf_exempt  # Disable CSRF for testing
+def signout(request):
+    token_error = is_token_valid(request)
+    if token_error:
+        return token_error
+
+    if request.method != 'POST':
+        return JsonResponse({"status": "error", "message": "Invalid request method"}, status=405)
+
+    # Logout the user and clear the session
+    logout(request)
+
+    return JsonResponse({"status": "success", "message": "Signed out successfully"}, status=200)
