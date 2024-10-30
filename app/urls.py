@@ -6,5 +6,7 @@ urlpatterns = [
     path('GenreADD/',views.GenreADD,name="GenreADD"),
     path('GenreUPDATE/',views.GenreUPDATE,name="GenreUPDATE"),
     path('GenreDELETE/',views.GenreDELETE,name="GenreDELETE"),
-    path("movieADD",views.movieADD,name="movieADD")
+    path("movieADD",views.movieADD,name="movieADD"),
+    path("movieUpdae",views.movieUpdate,name="movieUpdate"),
+    path("movieDelete",views.movieADD,name="movieDelete")
 ]

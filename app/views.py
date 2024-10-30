@@ -144,8 +144,6 @@ def movieADD(request):
 
     try:
         data = json.loads(request.body)
-
-        # Validate required fields
         title = data.get('title')
         release_year = data.get('release_year')
 
@@ -154,15 +152,11 @@ def movieADD(request):
                 {"status": "error", "message": "Missing required fields: title, release_year"},
                 status=400
             )
-
-        # Create movie instance
         movie = Movie.objects.create(
             name=title,
             description=data.get('description', ''),
             release_year=release_year
         )
-
-        # Set genres if provided
         if 'genres' in data:
             movie.genres.set(data['genres'])
 
@@ -178,3 +172,5 @@ def movieADD(request):
         return JsonResponse({"status": "error", "message": "Movie with this title already exists"}, status=400)
     except json.JSONDecodeError:
         return JsonResponse({"status": "error", "message": "Invalid JSON"}, status=400)
+    
+# Movie update
