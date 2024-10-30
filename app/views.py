@@ -308,5 +308,7 @@ def loginCustomer(request):
 
 #customer token
 
-    
 
+#token validation 
+def is_token_valid_customer(token):
+    return token == "your token"
