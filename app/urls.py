@@ -12,6 +12,7 @@ urlpatterns = [
     path("movieDelete",views.movieDelete,name="movieDelete"),
     path("signout",views.signout,name="signout"),
     path("customer",views.customer,name="customer"),
-    path("loginCustomer",views.loginCustomer,name="loginCustomer")
+    path("loginCustomer",views.loginCustomer,name="loginCustomer"),
+    path("signoutCustomer",views.signoutCustomer,name="signoutCustomer")
     
 ]

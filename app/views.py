@@ -232,7 +232,7 @@ def movieDelete(request, movie_id):
     
 
 #signout
-@csrf_exempt  # Disable CSRF for testing
+@csrf_exempt  
 def signout(request):
     token_error = is_token_valid(request)
     if token_error:
@@ -312,3 +312,18 @@ def loginCustomer(request):
 #token validation 
 def is_token_valid_customer(token):
     return token == "your token"
+
+
+#user logout/signout
+
+@csrf_exempt  
+def signoutCustomer(request):
+    token_error = is_token_valid_customer(request)
+    if token_error:
+        return token_error
+
+    if request.method != 'POST':
+        return JsonResponse({"status": "error", "message": "Invalid request method"}, status=405)
+    logout(request)
+
+    return JsonResponse({"status": "success", "message": "Signed out successfully"}, status=200)
