@@ -26,3 +26,8 @@ class Customer(models.Model):
     password = models.CharField()
     def __str__(self):
         return self.email
+    
+class WatchedList(models.Model):
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
+    customer = models.ForeignKey(User, on_delete=models.CASCADE)
+    status = models.CharField(max_length=50, default='watched') 

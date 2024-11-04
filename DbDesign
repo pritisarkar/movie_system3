@@ -35,6 +35,17 @@ email
 name
 password
 
+# Show WatchedList of logged in user
+# Add/Delete Movies from WatchList
+# Mark a movie as watched which puts the movie in a WatchedList
+# Show WatchedList of logged in user
+# Add/Delete Movies from WatchedList
+-WatchedList(table)
+-id
+-movie_id
+-customer_id(using for diff customer add movie in same  watchlist)
+-status (string watched , watch)
+choices
 
 
 

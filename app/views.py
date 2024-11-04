@@ -13,6 +13,8 @@ from .models import Movie
 from django.db import IntegrityError 
 from django.contrib.auth import logout
 from .models import Customer
+from .models import WatchedList
+from django.shortcuts import get_object_or_404
 
 
 
@@ -275,6 +277,7 @@ def customer(request):
     
 
 #customer login
+@csrf_exempt
 def loginCustomer(request):
     print("hey login")
     try:
@@ -313,9 +316,25 @@ def loginCustomer(request):
 def is_token_valid_customer(token):
     return token == "your token"
 
+#customer profile show only name password and email
+@csrf_exempt
+def customerprofile(request, customer_id=None):
+    if customer_id is not None:
+        try:
+            customer = Customer.objects.get(id=customer_id)
+            customer_data = {
+                'id': customer.id,
+                'name': customer.name,
+                'email': customer.email,
+                'password': customer.password, 
+            }
+            return JsonResponse({"status":"sucess","name":customer_data[1],"email":customer_data[2],"password":customer_data[3]},status=200)
+            
+        except Customer.DoesNotExist:
+            return JsonResponse({"status": "error", "message": "data not found"}, status=405)
+
 
 #user logout/signout
-
 @csrf_exempt  
 def signoutCustomer(request):
     token_error = is_token_valid_customer(request)
@@ -327,3 +346,20 @@ def signoutCustomer(request):
     logout(request)
 
     return JsonResponse({"status": "success", "message": "Signed out successfully"}, status=200)
+
+
+# add watchlist 
+class AddToWatchedListView(View):
+    def post(self, request, movie_id):
+        movie = get_object_or_404(Movie, id=movie_id)
+        watched_entry, created = WatchedList.objects.get_or_create(movie=movie, customer=request.user)
+        if created:
+            return JsonResponse({'message': 'Movie added to watched list'}, status=201)
+        return JsonResponse({'message': 'Movie already in watched list'}, status=400)
+    
+#delete watchlist
+class DeleteFromWatchedListView(View):
+    def delete(self, request, movie_id):
+        watched_movie = get_object_or_404(WatchedList, movie_id=movie_id, customer=request.user)
+        watched_movie.delete()
+        return JsonResponse({'message': 'Movie removed from watched list'}, status=204)
