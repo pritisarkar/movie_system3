@@ -349,6 +349,7 @@ def signoutCustomer(request):
 
 
 # add watchlist 
+@csrf_exempt
 class AddToWatchedListView(View):
     def post(self, request, movie_id):
         movie = get_object_or_404(Movie, id=movie_id)
