@@ -75,7 +75,7 @@ def login(request):
 
 #token validation 
 def is_token_valid(token):
-    return token == "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJleHAiOjE3MzAyMDA1OTYsImlhdCI6MTczMDE5Njk5Nn0.2zGrVXKtHQKz-zyUiPvy-T2b-A66JGLDQXIWWoUaUns"
+    return token == "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyLCJleHAiOjE3MzA3OTQzOTYsImlhdCI6MTczMDc5MDc5Nn0.Coij9EeYxCtZ_6FSQbR5UDb8giWNO4y33mF-vts2Lbs"
 
 #add genre
 @csrf_exempt
@@ -103,6 +103,7 @@ def GenreADD(request):
         
         
 #update genre
+@csrf_exempt 
 def GenreUPDATE(request, genre_id):
     token_error = is_token_valid(request)
     if token_error:
@@ -117,13 +118,18 @@ def GenreUPDATE(request, genre_id):
             return JsonResponse(
                 {'id': genre.id, 'name': genre.name, 'description': genre.description}, 
                 status=200
-            )
+            )    
         except Genre.DoesNotExist:
             return JsonResponse({"status": "error", "message": "Genre not found"}, status=404)
         except json.JSONDecodeError:
             return JsonResponse({"status": "error", "message": "Invalid JSON"}, status=400)
-
+        except Exception as e:
+            return JsonResponse({"status": "error", "message": str(e)}, status=500)
+    else:
+        return JsonResponse({"status": "error", "message": "Invalid request method"}, status=405)
+    
 #Delete Genre
+@csrf_exempt
 def GenreDELETE(request, genre_id):
     token_error = is_token_valid(request)
     if token_error:
@@ -144,10 +150,8 @@ def movieADD(request):
     token_error = is_token_valid(request)
     if token_error:
         return token_error
-
     if request.method != 'POST':
         return JsonResponse({"status": "error", "message": "Invalid request method"}, status=405)
-
     try:
         data = json.loads(request.body)
         title = data.get('title')
