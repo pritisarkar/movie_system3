@@ -27,7 +27,11 @@ class Customer(models.Model):
     def __str__(self):
         return self.email
     
-class WatchedList(models.Model):
-    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
+class WatchList(models.Model):
     customer = models.ForeignKey(User, on_delete=models.CASCADE)
-    status = models.CharField(max_length=50, default='watched') 
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
+
+class WatchedList(models.Model):
+    customer = models.ForeignKey(User, on_delete=models.CASCADE)
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
+    watched_on = models.DateField(auto_now_add=True)

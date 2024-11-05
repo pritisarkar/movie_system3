@@ -16,5 +16,9 @@ urlpatterns = [
     path("signoutCustomer",views.signoutCustomer,name="signoutCustomer"),
      path("customerprofile",views.customerprofile,name="customerprofile"),
     path("AddToWatchedListView",views.AddToWatchedListView,name="AddToWatchedListView"),
-    path("DeleteFromWatchedListView",views.DeleteFromWatchedListView,name="DeleteFromWatchedListView")
+    path("DeleteFromWatchedListView",views.DeleteFromWatchedListView,name="DeleteFromWatchedListView"),
+    #watched-list
+    path("DeleteFromWatchedListView",views.DeleteFromWatchedListView,name="DeleteFromWatchedListView"),
+    #admin_dashboard
+    path("admin_dashboard",views.admin_dashboard,name="admin_dashboard")
 ]

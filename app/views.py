@@ -13,9 +13,11 @@ from .models import Movie
 from django.db import IntegrityError 
 from django.contrib.auth import logout
 from .models import Customer
-from .models import WatchedList
+from .models import WatchList, WatchedList
 from django.shortcuts import get_object_or_404
-
+from django.db.models import Count
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
 
 
@@ -369,6 +371,7 @@ class DeleteFromWatchedListView(View):
 
 
 #show a watchlist
+@csrf_exempt
 def watched_list_view(request):
     if not request.user.is_authenticated:
         return JsonResponse({'message': 'User not authenticated'}, status=401)
@@ -385,4 +388,35 @@ def watched_list_view(request):
         })
     return JsonResponse({'watched_movies': movie_data}, status=200)
 
-# dashboard
+#user dashboard
+@csrf_exempt
+@api_view(['GET'])
+def admin_dashboard(request):
+    genre_movie_count = Genre.objects.annotate(movie_count=Count('movies')).values('name', 'movie_count')
+    user_count = User.objects.count()
+    users_with_watchlist = WatchedList.objects.values('user').distinct().count()
+    movie_watchlist_count = Movie.objects.annotate(
+        watchlist_count=Count('watchlisted_by')
+    ).annotate(
+        watched_count=Count('watched_by')
+    ).values('title', 'watchlist_count', 'watched_count')
+    data = {
+        'genre_movie_count': list(genre_movie_count),
+        'user_count': user_count,
+        'users_with_watchlist': users_with_watchlist,
+        'movie_watchlist_count': list(movie_watchlist_count),
+    }
+    return Response(data)
+
+#customer admin
+def client_dashboard(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({'message': 'User not authenticated'}, status=401)
+    watchlist_count = WatchList.objects.filter(customer=request.user).count()
+    watchedlist_count = WatchedList.objects.filter(customer=request.user).count()
+    return JsonResponse({
+        'watchlist_count': watchlist_count,
+        'watchedlist_count': watchedlist_count
+    }, status=200)
+
+
