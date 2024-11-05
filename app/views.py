@@ -368,4 +368,21 @@ class DeleteFromWatchedListView(View):
     
 
 
+#show a watchlist
+def watched_list_view(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({'message': 'User not authenticated'}, status=401)
+    watched_movies = WatchedList.objects.filter(customer=request.user)
+    if not watched_movies.exists():
+        return JsonResponse({'message': 'No movies in watched list'}, status=404)
+    movie_data = []
+    for entry in watched_movies:
+        movie = entry.movie
+        movie_data.append({
+            'id': movie.id,
+            'title': movie.title,
+            'release_date': movie.release_date.strftime('%Y-%m-%d'),
+        })
+    return JsonResponse({'watched_movies': movie_data}, status=200)
+
 # dashboard
