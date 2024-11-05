@@ -44,9 +44,12 @@ password
 -id
 -movie_id
 -customer_id(using for diff customer add movie in same  watchlist)
--status (string watched , watch)
-choices
 
+
+-WatchedList(table)
+-customer
+-movie
+-watched_on
 
 
 
