@@ -14,7 +14,7 @@ urlpatterns = [
     path("customer",views.customer,name="customer"),
     path("loginCustomer",views.loginCustomer,name="loginCustomer"),
     path("signoutCustomer",views.signoutCustomer,name="signoutCustomer"),
-    path("customerprofile",views.customerprofile,name="customerprofile"),
+     path("customerprofile",views.customerprofile,name="customerprofile"),
     path("AddToWatchedListView",views.AddToWatchedListView,name="AddToWatchedListView"),
     path("DeleteFromWatchedListView",views.DeleteFromWatchedListView,name="DeleteFromWatchedListView")
 ]

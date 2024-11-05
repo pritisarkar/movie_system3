@@ -359,8 +359,13 @@ class AddToWatchedListView(View):
         return JsonResponse({'message': 'Movie already in watched list'}, status=400)
     
 #delete watchlist
+@csrf_exempt
 class DeleteFromWatchedListView(View):
     def delete(self, request, movie_id):
         watched_movie = get_object_or_404(WatchedList, movie_id=movie_id, customer=request.user)
         watched_movie.delete()
         return JsonResponse({'message': 'Movie removed from watched list'}, status=204)
+    
+
+
+# dashboard
