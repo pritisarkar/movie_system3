@@ -92,8 +92,6 @@ def is_token_valid(view_func):
         token = request.headers.get("Authorization")
         if not token:
             return JsonResponse({"message": "Token is missing"}, status=401)
-        # if token.startswith("Bearer "):
-        #     token = token[7:]
         try:
             decoded_token = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
             user_id = decoded_token["user_id"]
@@ -111,10 +109,6 @@ def is_token_valid(view_func):
 @csrf_exempt
 @is_token_valid
 def GenreADD(request):
-    # token = request.headers.get('Authorization')
-    # print(token)
-    # if not token or not is_token_valid(token.split(" ")[-1]):
-    #     return JsonResponse({"status":"error","message":"token missing"},status=401)
     if request.method == "GET":
         try:
             genres = list(Genre.objects.values("id", "name", "description"))
@@ -141,10 +135,6 @@ def GenreADD(request):
 @csrf_exempt
 @is_token_valid
 def GenreUPDATE(request, genre_id):
-    # token = request.headers.get('Authorization')
-    # token = is_token_valid(request)
-    # if not token or not is_token_valid(token.split(" ")[-1]):
-    #     return JsonResponse({"status":"error","message":"token missing"},status=401)
     if request.method == "PUT":
         try:
             data = json.loads(request.body)
@@ -176,10 +166,6 @@ def GenreUPDATE(request, genre_id):
 @csrf_exempt
 @is_token_valid
 def GenreDELETE(request, genre_id):
-    # token = request.headers.get('Authorization')
-    # token = is_token_valid(request)
-    # if not token or not is_token_valid(token.split(" ")[-1]):
-    #     return JsonResponse({"status":"error","message":"token missing"},status=401)
     if request.method == "DELETE":
         try:
             genre = Genre.objects.get(id=genre_id)
@@ -202,12 +188,6 @@ def GenreDELETE(request, genre_id):
 @csrf_exempt
 @is_token_valid
 def movieADD(request):
-    # Validate the token first
-    # token = request.headers.get('Authorization')
-    # if token:
-    #     token = is_token_valid(request)
-    # if not token or not is_token_valid(token.split(" ")[-1]):
-    #     return JsonResponse({"status":"error","message":"token missing"},status=401)
     if request.method != "POST":
         return JsonResponse(
             {
@@ -280,11 +260,6 @@ def movieADD(request):
 @csrf_exempt
 @is_token_valid
 def movieUpdate(request, movie_id):
-    # token = request.headers.get('Authorization')
-    # token = is_token_valid(request)
-    # if not token or not is_token_valid(token.split(" ")[-1]):
-    #     return JsonResponse({"status":"error","message":"token missing"},status=401)
-
     if request.method != "PUT":
         return JsonResponse(
             {"status": "error", "message": "Invalid request method"}, status=405
@@ -329,10 +304,6 @@ def movieUpdate(request, movie_id):
 @csrf_exempt
 @is_token_valid
 def movieDelete(request, movie_id):
-    # token = request.headers.get('Authorization')
-    # token = is_token_valid(request)
-    # if not token or not is_token_valid(token.split(" ")[-1]):
-    #     return JsonResponse({"status":"error","message":"token missing"},status=401)
     if request.method != "DELETE":
         return JsonResponse(
             {"status": "error", "message": "Invalid request method, DELETE expected."},
@@ -439,11 +410,12 @@ def loginCustomer(request):
                     )
                 else:
                     return JsonResponse(
-                        {"msg": "invalid password", "status": "error"}, status=401
+                        {"msg": "invalid password or email", "status": "error"},
+                        status=401,
                     )
             else:
                 return JsonResponse(
-                    {"msg": "user not found", "status": "error"}, status=404
+                    {"msg": "invalid password or email", "status": "error"}, status=404
                 )
 
         return JsonResponse(
@@ -456,19 +428,13 @@ def loginCustomer(request):
         return JsonResponse({"msg": str(e), "status": "error"}, status=500)
 
 
-# customer token
-
-
-# token validation
-# def is_token_valid_customer(token):
 def is_token_valid_customer(view_func):
     @wraps(view_func)
     def decorated(request, *args, **kwargs):
         token = request.headers.get("Authorization")
         if not token:
             return JsonResponse({"message": "Token is missing"}, status=401)
-        # if token.startswith("Bearer "):
-        #     token = token[7:]
+
         try:
             decoded_token = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
             user_id = decoded_token["user_id"]
@@ -507,15 +473,10 @@ def customerprofile(request, customer_id=None):
         return "hello"
 
 
-# user logout/signout
-# @csrf_exempt
-# def signoutCustomer(request):
 @csrf_exempt
 @is_token_valid_customer
 def signoutCustomer(request):
-    # token_error = is_token_valid_customer(request)
-    # if token_error:
-    #     return token_error
+
     if request.method != "POST":
         return JsonResponse(
             {"status": "error", "message": "Invalid request method"}, status=405
@@ -610,6 +571,3 @@ def client_dashboard(request):
         {"watchlist_count": watchlist_count, "watchedlist_count": watchedlist_count},
         status=200,
     )
-
-
-print("hey!")
