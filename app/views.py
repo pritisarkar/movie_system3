@@ -397,9 +397,9 @@ def loginCustomer(request):
                 if bcrypt.checkpw(password, customer.password.encode("utf-8")):
                     token_payload = {
                         "user_id": customer.id,
-                        "exp": datetime.datetime.utcnow()
+                        "exp": datetime.datetime.now()
                         + datetime.timedelta(seconds=settings.JWT_EXPIRATION_DELTA),
-                        "iat": datetime.datetime.utcnow(),
+                        "iat": datetime.datetime.now(),
                     }
                     token = jwt.encode(
                         token_payload, settings.JWT_SECRET, algorithm="HS256"
@@ -464,13 +464,13 @@ def customerprofile(request, customer_id=None):
                 "email": customer.email,
                 "password": customer.password,
             }
-            return JsonResponse({"status": "sucess", "data": customer_data})
+            return JsonResponse({"status": "success", "data": customer_data})
         except Customer.DoesNotExist:
             return JsonResponse(
-                {"status": "error", "message": "data not found"}, status=405
+                {"status": "error", "message": "Data not found"}, status=404
             )
     else:
-        return "hello"
+        return JsonResponse({"message": "customer_id is required"}, status=400)
 
 
 @csrf_exempt
