@@ -576,8 +576,9 @@ def client_dashboard(request):
 
 
 
-#admin dashboard
-def admin_dashboard(request):
+#user dashboard
+@csrf_exempt
+def user_dashboard(request):
     # Count of movies per genre
     movies_per_genre = Movie.objects.values('genre').annotate(count=Count('id'))
 
@@ -612,6 +613,21 @@ def admin_dashboard(request):
     }
 
     return JsonResponse(context)
+
+
+
+#customer dashboad
+@csrf_exempt
+def customer_dashboard(request):
+    watchlist_count = WatchList.objects.filter(user=request.user).count()
+    watchedlist_count = WatchedList.objects.filter(user=request.user).count()
+
+    data = {
+        'watchlist_count': watchlist_count,
+        'watchedlist_count': watchedlist_count,
+    }
+
+    return JsonResponse(data)
 
 
 
