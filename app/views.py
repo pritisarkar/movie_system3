@@ -571,3 +571,48 @@ def client_dashboard(request):
         {"watchlist_count": watchlist_count, "watchedlist_count": watchedlist_count},
         status=200,
     )
+
+
+
+
+
+#admin dashboard
+def admin_dashboard(request):
+    # Count of movies per genre
+    movies_per_genre = Movie.objects.values('genre').annotate(count=Count('id'))
+
+    # Count of registered users
+    user_count = User.objects.count()
+
+    # Count of users with movies in their watchlist
+    users_with_watchlist = (
+        User.objects.filter(watchlist__isnull=False)
+        .distinct()
+        .count()
+    )
+
+    watchlist_count = (
+        WatchList.objects.values('movie__title')
+        .annotate(count=Count('id'))
+        .order_by('-count')
+    )
+    
+    watched_count = (
+        WatchedList.objects.values('movie__title')
+        .annotate(count=Count('id'))
+        .order_by('-count')
+    )
+
+    context = {
+        "movies_per_genre": list(movies_per_genre),
+        "user_count": user_count,
+        "users_with_watchlist": users_with_watchlist,
+        "watchlist_count": list(watchlist_count),
+        "watched_count": list(watched_count),
+    }
+
+    return JsonResponse(context)
+
+
+
+
