@@ -23,7 +23,7 @@ from .models import User, Genre, Movie, Customer, WatchList, WatchedList
 
 @csrf_exempt
 def user(request):
-    print("hey user")
+    
     try:
         if request.method == "POST":
             data = json.loads(request.body)
